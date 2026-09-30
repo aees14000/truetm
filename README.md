@@ -39,6 +39,18 @@ cargo build --release
 sudo cp target/release/truetm /usr/local/bin/
 ```
 
+### Arch Linux (pacman)
+
+A `PKGBUILD` is included in the repo:
+
+```sh
+git clone https://github.com/theludd/truetm
+cd truetm
+makepkg -si
+```
+
+Since configuration is compile-time (see [Configuration](#configuration)), edit `src/config.rs` *before* running `makepkg`. The package is built from your working tree, so your changes are baked in. To change settings later, edit `src/config.rs`, bump `pkgrel` in the `PKGBUILD`, and run `makepkg -fsi` again.
+
 ## Usage
 
 ```sh
@@ -47,7 +59,7 @@ truetm
 
 ## Configuration
 
-truetm follows the dwm philosophy: configuration is done at compile time by editing `src/config.rs`. This file contains all keybindings and settings in a readable format. After making changes, recompile with `cargo build --release`.
+truetm follows the dwm philosophy: configuration is done at compile time by editing `src/config.rs`. This file contains all keybindings and settings in a readable format. After making changes, recompile with `cargo build --release` (or rebuild the package with `makepkg -f` on Arch).
 
 ## Default Keybindings
 
@@ -69,7 +81,7 @@ All keybindings use `Ctrl+B` as the prefix key.
 | `Ctrl+B z`     | Toggle zoom (fullscreen focused window)      |
 | `Ctrl+B 1-9`   | Focus window by number                       |
 | `Ctrl+B a`     | Toggle broadcast mode (input to all windows) |
-| `Ctrl+B q`     | Quit truetm                                  |
+| `Ctrl+B Q`     | Quit truetm                                  |
 | `Ctrl+B b`     | Send literal Ctrl+B to window                |
 
 ### Tags (Workspaces)
