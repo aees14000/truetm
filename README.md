@@ -51,6 +51,19 @@ makepkg -si
 
 Since configuration is compile-time (see [Configuration](#configuration)), edit `src/config.rs` *before* running `makepkg`. The package is built from your working tree, so your changes are baked in. To change settings later, edit `src/config.rs`, bump `pkgrel` in the `PKGBUILD`, and run `makepkg -fsi` again.
 
+### Alpine Linux (apk)
+
+An `APKBUILD` is included in the repo:
+
+```sh
+abuild-keygen -a -i
+git clone https://github.com/theludd/truetm
+cd truetm
+abuild -r
+```
+
+`abuild-keygen -a -i` generates a local signing key and installs it into `/etc/apk/keys`; it only needs to run once per machine. As with the `PKGBUILD`, this builds from your working tree, so edit `src/config.rs` before running `abuild -r` to bake in your settings, and bump `pkgrel` before rerunning it to pick up later changes.
+
 ## Usage
 
 ```sh
