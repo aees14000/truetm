@@ -2,6 +2,8 @@
 
 A terminal multiplexer inspired by [dvtm](https://www.brain-dump.org/projects/dvtm/) with truecolor support.
 
+This is a fork of [theludd/truetm](https://github.com/theludd/truetm).
+
 ## Features
 
 - **Truecolor support** - Full 24-bit RGB color passthrough
