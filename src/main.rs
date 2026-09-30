@@ -408,6 +408,8 @@ impl App {
             }
         }
 
+        self.panes.poll_exited();
+
         // Clean up exited panes
         let had_exited = self.panes.all().iter().any(|p| p.exited);
         if had_exited {

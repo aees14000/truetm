@@ -43,6 +43,7 @@ pub struct Pane {
     child: Box<dyn Child + Send + Sync>,
     _reader_thread: JoinHandle<()>,
     pub exited: bool,
+    reaped: bool,
 }
 
 impl Pane {
@@ -125,7 +126,18 @@ impl Pane {
             child,
             _reader_thread: reader_thread,
             exited: false,
+            reaped: false,
         })
+    }
+
+    /// Detect shell exit via waitpid. Some kernels (iSH) never report EOF
+    /// on the pty master when the shell exits, so the reader thread alone
+    /// can't be relied on.
+    pub fn poll_exit(&mut self) {
+        if !self.reaped && matches!(self.child.try_wait(), Ok(Some(_))) {
+            self.reaped = true;
+            self.exited = true;
+        }
     }
 
     /// Get the current working directory of the shell process
@@ -176,7 +188,10 @@ impl Drop for Pane {
         // Kill and reap the child; without the wait, every closed or
         // exited shell lingers as a zombie for the session's lifetime
         // (portable-pty's Child does not reap on drop).
-        let _ = self.child.kill();
+        // Skip kill once reaped: the pid may already belong to another process.
+        if !self.reaped {
+            let _ = self.child.kill();
+        }
         let _ = self.child.wait();
     }
 }
@@ -268,6 +283,13 @@ impl PaneManager {
     pub fn mark_exited(&mut self, id: PaneId) {
         if let Some(pane) = self.get_mut(id) {
             pane.exited = true;
+        }
+    }
+
+    /// Poll every pane's child process for exit
+    pub fn poll_exited(&mut self) {
+        for pane in &mut self.panes {
+            pane.poll_exit();
         }
     }
 
